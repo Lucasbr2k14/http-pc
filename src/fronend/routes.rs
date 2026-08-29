@@ -1,8 +1,7 @@
 use crate::state::AppState;
+use super::handler::root;
 
 use std::sync::Arc;
-
-use askama::Template;
 
 use axum::{
     Router,

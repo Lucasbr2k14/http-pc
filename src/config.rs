@@ -44,7 +44,7 @@ pub fn from_env() -> Configs {
             .expect("Redis user not defined from .env"),
         redis_pass: env::var("REDIS_PASS")
             .expect("Redis password not defined from .env"),
-        redis_port: env::var("REDIS_PASS")
+        redis_port: env::var("REDIS_PORT")
             .expect("Redis port not defined from .env"),
         json_web_token_secret: env::var("JWT_SECRET")
             .expect("Json Web Token secret not defined from .env")

@@ -1,8 +1,7 @@
 use axum::{
     Router, 
-    http::StatusCode, 
-    response::{ Html, Json },
-    routing::{ get, post },
+    response::{ Json },
+    routing::{ get },
     extract::Path
 };
 
@@ -16,7 +15,11 @@ mod state;
 mod database;
 mod fronend;
 
-use database::postgres::postgress_connect;
+use database::{
+    postgres::postgress_connect,
+    redis::redis_connect
+};
+
 use state::AppState;
 
 
@@ -25,20 +28,27 @@ async fn main() {
     // Start .env
     dotenvy::dotenv().ok();
 
+    // Iniciando todas as configs
     let config = config::from_env();
     
+    // Conexão com o postgress
     let postgres_pool = postgress_connect(config.clone())
     .await
     .unwrap();
 
+    // Conexão com o redis
+    let connect_redis = redis_connect(config.clone())
+    .await;
+
+
     // Cria o app state para passar para todas as rotas.
     let app_state = Arc::new(AppState {
         config: config.clone(),
-        postgres: postgres_pool.clone(),
-    
+        postgres: postgres_pool,
+        redis: connect_redis,
     }); 
 
-
+    
     // Criar o servidor
     let url = format!("{}:{}", config.ip, config.port);
     let listener = TcpListener::bind(url).await.unwrap();
