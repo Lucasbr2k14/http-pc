@@ -5,8 +5,8 @@ use crate::config::Configs;
 
 
 #[derive(Clone)]
-struct AppState {
+pub struct AppState {
     pub postgres: PgPool,
-    pub redis: MultiplexedConnection,
-    pub config: Configs,
+    // pub redis:    MultiplexedConnection,
+    pub config:   Configs,
 }

@@ -6,13 +6,19 @@ use axum::{
     extract::Path
 };
 
+use std::sync::Arc;
+
 use dotenvy;
 use tokio::net::TcpListener;
-use askama::Template;
 
 mod config;
 mod state;
 mod database;
+mod fronend;
+
+use database::postgres::postgress_connect;
+use state::AppState;
+
 
 #[tokio::main]
 async fn main() {
@@ -20,6 +26,18 @@ async fn main() {
     dotenvy::dotenv().ok();
 
     let config = config::from_env();
+    
+    let postgres_pool = postgress_connect(config.clone())
+    .await
+    .unwrap();
+
+    // Cria o app state para passar para todas as rotas.
+    let app_state = Arc::new(AppState {
+        config: config.clone(),
+        postgres: postgres_pool.clone(),
+    
+    }); 
+
 
     // Criar o servidor
     let url = format!("{}:{}", config.ip, config.port);
@@ -28,28 +46,19 @@ async fn main() {
     println!("Listening: {}", listener.local_addr().unwrap());
 
     // Criando as rotas
-    let _ = axum::serve(listener, router()).await;
+    let _ = axum::serve(listener, router(app_state)).await;
 }
 
-
-fn router() -> Router {
+fn router( state: Arc<AppState> ) -> Router {
     let router = Router::new()
-    .route("/", get(root))
-    .route(
-        "/json/{id}", 
-        get( move |path| test_json(path) )
-    );
-
+        .route(
+            "/json/{id}", 
+            get( move |path| test_json(path) )
+        )
+        .merge(fronend::routes::routes())
+        .with_state(state);
+    
     router
-}
-
-#[derive(Template)]
-#[template(path = "index.html.jinja")]
-struct Index;
-
-async fn root() -> Html<String> {
-    let template = Index.render().unwrap();
-    Html(template)
 }
 
 async fn test_json( Path(user_id):Path<String> ) -> Json <serde_json::Value> {
