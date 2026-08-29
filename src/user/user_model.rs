@@ -3,7 +3,8 @@ use serde::{ Serialize, Deserialize };
 #[derive(Serialize, Deserialize, Debug)]
 enum UserRole {
     Admin,
-    Regular
+    Regular,
+    User
 }
 
 #[derive(Serialize, Deserialize, Debug)]

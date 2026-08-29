@@ -1,5 +1,5 @@
-use sqlx::PgPool;
-use sqlx::postgres::PgPoolOptions;
+use sqlx::{ PgPool, migrate };
+use sqlx::postgres::{ PgPoolOptions };
 
 use crate::config::Configs;
 
@@ -21,4 +21,10 @@ pub async fn postgress_connect(conf:Configs) -> Result<PgPool, sqlx::Error> {
         .await;
     
     pool
+}
+
+pub async fn postgres_migration( pool: &PgPool ) {
+    migrate!().run(pool)
+        .await
+        .expect("Erro ao rodar as migrations");
 }

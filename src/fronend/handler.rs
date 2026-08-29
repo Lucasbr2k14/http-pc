@@ -10,6 +10,7 @@ use axum::{
     extract::State
 };
 
+// Funções de handler para cada request, do frontend.
 #[derive(Template)]
 #[template(path = "index.html.jinja")]
 struct Index {
@@ -19,17 +20,9 @@ struct Index {
 pub async fn root(
     State(state): State<Arc<AppState>>
 ) -> Html<String> {
-
     let mut redis = state.redis.clone();
-
     let q:u32 = redis.incr("root:count", 1).await.unwrap();
-
-    println!("contagem: {}", q);
-
-    let index = Index {
-        counter: q
-    };
-
+    let index = Index { counter: q };
     let template = index.render().unwrap();
     Html(template)
 }

@@ -3,7 +3,6 @@ use redis::aio::ConnectionManager;
 
 use crate::config::Configs;
 
-
 #[derive(Clone)]
 pub struct AppState {
     pub postgres: PgPool,
