@@ -5,5 +5,5 @@ use axum::{
 
 pub fn router() -> Router {
     Router::new()
-        .route();
+        .route("/register", get() );
 }

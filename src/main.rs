@@ -8,7 +8,10 @@ mod database;
 mod router;
 mod fronend;
 use database::{
-    postgres::{ postgress_connect, postgres_migration },
+    postgres::{ 
+        postgress_connect,
+        postgres_migration 
+    },
     redis::redis_connect
 };
 use state::AppState;
