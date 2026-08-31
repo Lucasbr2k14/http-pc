@@ -84,8 +84,12 @@ pub async fn create_user (
     }
 }
 
+pub async fn users(
+    State(state): State<Arc<AppState>>,
+) {
+
+}
+
 pub async fn get_user() {}
-
-
 pub async fn delete_user() {}
 pub async fn update_user() {}
