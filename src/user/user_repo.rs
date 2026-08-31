@@ -26,8 +26,6 @@ pub async fn create_user_repo(
     .execute(&state.postgres)
     .await;
 
-    println!("{:?}", result);
-
     match result {
         Ok(_) => Ok(()),
 
