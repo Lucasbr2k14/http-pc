@@ -7,6 +7,9 @@ mod state;
 mod database;
 mod router;
 mod fronend;
+mod user;
+mod security;
+
 use database::{
     postgres::{ 
         postgress_connect,

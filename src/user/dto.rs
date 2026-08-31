@@ -1,5 +1,7 @@
-struct CreateUser {
-    name: String,
-    email: String,
-    password: String,
-};
+use serde::Deserialize;
+#[derive(Debug, Deserialize)]
+pub struct CreateUser {
+    pub name: String,
+    pub email: String,
+    pub password: String
+}

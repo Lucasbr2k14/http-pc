@@ -1,0 +1,23 @@
+{% extends "base.html.jinja" %}
+{% block title %}Index{% endblock %}
+
+{% block head %}
+    {{ super() }}
+{% endblock %}
+
+{% block content %}
+<div id="register_form">
+    <p>Regiser</p>
+    <form action="/register" method="post">
+        <input type="text" name="name" placeholder="name" > <br>
+        <input type="email" name="email" placeholder="email" > <br>
+        <input type="password" name="password" placeholder="password"> <br>
+        <input type="submit"> <br>
+        
+        {% if let Some(error) = error %}
+            <a> {{ error }} </a>
+        {% endif %}
+
+    </form>
+</div>
+{% endblock %}
