@@ -2,7 +2,9 @@ use std::sync::Arc;
 
 use crate::{
     state::AppState, user::{
-        self, dto::PublicUser, errors::UsersErrors, user_model::User
+        dto::PublicUser,
+        errors::UsersErrors,
+        user_model::User
     }
 };
 
@@ -73,5 +75,4 @@ pub async fn get_users(
             Err(UsersErrors::SqlxError)
         }
     }
-
 }
