@@ -2,11 +2,11 @@ use std::sync::Arc;
 
 use crate::{
     state::AppState, user::{
-        dto::CreateUser, errors::UsersErrors, user_model::User
+        self, dto::PublicUser, errors::UsersErrors, user_model::User
     }
 };
 
-pub async fn create_user_repo(
+pub async fn create_user(
     state: &Arc<AppState>,
     user: User
 ) -> Result<(), UsersErrors> {
@@ -43,6 +43,35 @@ pub async fn create_user_repo(
             }
         },
 
-        Err(_) => Err(UsersErrors::SqlxError)
+        Err(error) => {
+            println!("{:?}", error);
+            Err(UsersErrors::SqlxError)
+        }
     }
+}
+
+pub async fn get_users(
+    state: &Arc<AppState>
+) ->  Result<Vec<PublicUser>, UsersErrors> {
+    let users = sqlx::query_as::<_, PublicUser>(
+        r#"
+        SELECT 
+            name,
+            email,
+            description,
+            role_id,
+            uuid
+        FROM users
+        "#
+    ).fetch_all(&state.postgres)
+    .await;
+
+    match users {
+        Ok(users) => Ok(users),
+        Err(error) => {
+            println!("{:?}", error);
+            Err(UsersErrors::SqlxError)
+        }
+    }
+
 }

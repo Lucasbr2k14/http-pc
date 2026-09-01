@@ -1,4 +1,4 @@
-use std::sync::Arc;
+use std::{f32::consts::E, sync::Arc};
 
 use askama::Template;
 use axum::{
@@ -14,11 +14,16 @@ use axum::{
     }
 };
 
-use crate::state::AppState;
+use crate::{
+    state::AppState, user::{dto::PublicUser, user_model::User}
+};
 
-use super::dto;
-use super::user_services;
-use super::errors::UsersErrors;
+use super::{
+    dto,
+    user_services,
+    errors::UsersErrors
+};
+
 
 /*
 TODO: Criar user
@@ -84,10 +89,35 @@ pub async fn create_user (
     }
 }
 
-pub async fn users(
-    State(state): State<Arc<AppState>>,
-) {
+#[derive(Template)]
+#[template(path = "users.html.jinja")]
+struct UsersTemplate {
+    users: Vec<PublicUser>
+}
 
+pub async fn users (
+    State(state): State<Arc<AppState>>,
+) -> Response {
+    
+    match user_services::get_all_users(&state).await {
+        
+        Ok(users) => { 
+            let template = UsersTemplate{
+                users:users
+            };
+            (
+                StatusCode::OK,
+                Html(template.render().unwrap()) 
+            ).into_response()
+        }
+        
+        Err(_) => { 
+            (
+                StatusCode::INTERNAL_SERVER_ERROR, 
+                "Internal error"
+            ).into_response()
+        }
+    }
 }
 
 pub async fn get_user() {}

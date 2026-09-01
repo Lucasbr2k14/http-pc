@@ -1,11 +1,13 @@
 use serde::{ Serialize, Deserialize };
+use sqlx::Type;
 use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Debug)]
-enum UserRole {
-    ADMIN,
-    REGULAR,
-    USER
+#[derive(Serialize, Deserialize, Debug, Type)]
+#[repr(i32)]
+pub enum UserRole {
+    ADMIN = 1,
+    USER = 2,
+    REGULAR = 3
 }
 
 #[derive(Serialize, Deserialize, Debug)]

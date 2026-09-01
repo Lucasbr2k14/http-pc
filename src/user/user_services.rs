@@ -1,15 +1,16 @@
 use std::sync::Arc;
-use crate::{security::password, user::errors::UsersErrors};
-
-use sqlx::Error;
+use crate::{
+    security::password, 
+    user::errors::UsersErrors
+};
 
 
 use crate::{
     state::AppState, 
     user::{
-        dto::CreateUser, 
+        dto:: { CreateUser, PublicUser}, 
         user_model::User,
-        user_repo::{ create_user_repo },
+        user_repo
     }
 };
 
@@ -28,5 +29,11 @@ pub async fn create_user (
         Some(password_hash.clone())
     );
 
-    create_user_repo(state, user).await
-}   
+    user_repo::create_user(state, user).await
+}
+
+pub async fn get_all_users( 
+    state: &Arc<AppState> 
+) -> Result<Vec<PublicUser>, UsersErrors>{
+    user_repo::get_users(state).await 
+}

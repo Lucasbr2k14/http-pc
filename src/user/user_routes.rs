@@ -19,7 +19,11 @@ pub fn router_web() -> Router<Arc<AppState>> {
         .route( 
             "/register", 
             post(handler::create_user)
+        )
+        .route(
+            "/users",
+            get(handler::users)
         );
-    
+  
     router
 }
