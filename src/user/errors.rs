@@ -4,5 +4,8 @@ pub enum UsersErrors {
     EmailAlreadyRegistered,
     NotFound,
     InvalidPassword,
-    SqlxError
+    RedisError,
+    SerializationError,
+    SqlxError,
+    InternalError
 }

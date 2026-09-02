@@ -1,10 +1,10 @@
 use std::sync::Arc;
+use redis::AsyncCommands;
+use uuid::Uuid;
 
 use crate::{
     state::AppState, user::{
-        dto::PublicUser,
-        errors::UsersErrors,
-        user_model::User
+        self, dto::PublicUser, errors::UsersErrors, user_model::User
     }
 };
 
@@ -31,7 +31,7 @@ pub async fn create_user(
     match result {
         Ok(_) => Ok(()),
 
-        Err(sqlx::Error::Database(db_error)) if db_error.is_check_violation() => {  
+        Err(sqlx::Error::Database(db_error)) if db_error.is_unique_violation() => {  
             match db_error.constraint() {
                 Some("users_name_key") => {
                     Err(UsersErrors::NameAlreadyRegistered)
@@ -72,6 +72,43 @@ pub async fn get_users(
         Ok(users) => Ok(users),
         Err(error) => {
             println!("{:?}", error);
+            Err(UsersErrors::SqlxError)
+        }
+    }
+}
+
+
+pub async fn get_user(
+    user_id:Uuid,
+    state: &Arc<AppState>
+) -> Result<PublicUser, UsersErrors> {
+    
+    let user = sqlx::query_as::<_, PublicUser>(
+        r#"
+        SELECT
+            name,
+            email,
+            description,
+            role_id,
+            uuid
+        FROM users
+        WHERE uuid = $1
+        "#
+    )
+    .bind(user_id)
+    .fetch_one(&state.postgres)
+    .await;
+
+
+    match user {
+        Ok(user) => Ok((user)),
+        
+        Err(sqlx::Error::RowNotFound) => {
+            Err(UsersErrors::NotFound)
+        },
+    
+        Err(e) => {
+            println!("Error: {e}");
             Err(UsersErrors::SqlxError)
         }
     }

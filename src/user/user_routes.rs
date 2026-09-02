@@ -23,6 +23,10 @@ pub fn router_web() -> Router<Arc<AppState>> {
         .route(
             "/users",
             get(handler::users)
+        )
+        .route(
+            "/users/{user_id}",
+            get(handler::get_user)
         );
   
     router

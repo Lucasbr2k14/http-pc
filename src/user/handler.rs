@@ -1,9 +1,9 @@
-use std::{f32::consts::E, sync::Arc};
+use std::sync::Arc;
 
 use askama::Template;
 use axum::{
     Form,
-    extract::State, 
+    extract::{ State, Path }, 
     http::StatusCode, 
     response::{ 
         Html,
@@ -13,9 +13,10 @@ use axum::{
         Response
     }
 };
+use serde_json::to_string;
 
 use crate::{
-    state::AppState, user::{dto::PublicUser, user_model::User}
+    state::AppState, user::{self, dto::PublicUser, user_model::User}
 };
 
 use super::{
@@ -120,6 +121,30 @@ pub async fn users (
     }
 }
 
-pub async fn get_user() {}
+pub async fn get_user(
+    Path(user_id): Path<uuid::Uuid>,
+    State(state): State<Arc<AppState>>
+) -> Response {
+
+    match user_services::get_user(user_id, &state).await {
+        Ok(user) => {
+            (
+                StatusCode::OK,
+                Json(user)
+            ).into_response()
+        }
+
+        Err(_) => {
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                "Internal error"
+            ).into_response()
+        }
+    }
+
+}
+
+
+
 pub async fn delete_user() {}
 pub async fn update_user() {}
