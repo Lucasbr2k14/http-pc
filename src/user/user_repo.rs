@@ -77,7 +77,6 @@ pub async fn get_users(
     }
 }
 
-
 pub async fn get_user(
     user_id:Uuid,
     state: &Arc<AppState>
@@ -98,7 +97,6 @@ pub async fn get_user(
     .bind(user_id)
     .fetch_one(&state.postgres)
     .await;
-
 
     match user {
         Ok(user) => Ok((user)),

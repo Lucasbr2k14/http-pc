@@ -121,6 +121,12 @@ pub async fn users (
     }
 }
 
+#[derive(Template)]
+#[template(path = "user.html.jinja")]
+struct GetUserTemplate {
+    user:Option<PublicUser>
+}
+
 pub async fn get_user(
     Path(user_id): Path<uuid::Uuid>,
     State(state): State<Arc<AppState>>
@@ -128,9 +134,19 @@ pub async fn get_user(
 
     match user_services::get_user(user_id, &state).await {
         Ok(user) => {
+            let template = GetUserTemplate { user:Some(user) }; 
             (
                 StatusCode::OK,
-                Json(user)
+                Html(template.render().unwrap())
+            ).into_response()
+        }
+
+
+        Err(UsersErrors::NotFound) => {
+            let template = GetUserTemplate { user:None }; 
+            (
+                StatusCode::OK,
+                Html(template.render().unwrap())
             ).into_response()
         }
 
@@ -143,8 +159,6 @@ pub async fn get_user(
     }
 
 }
-
-
 
 pub async fn delete_user() {}
 pub async fn update_user() {}

@@ -50,7 +50,8 @@ pub async fn get_user(
 
     let mut redis = state.redis.clone();
     let key = format!("users:{}", user_id.to_string());
-    
+
+    // Verificar se existe no cache
     let cache: Option<String> = redis.get(&key)
     .await
     .map_err(|_| UsersErrors::RedisError)?;
@@ -61,6 +62,7 @@ pub async fn get_user(
         return Ok(user);
     } 
     
+    // Se não existir pedir para o banco de dados
     match user_repo::get_user(user_id, &state).await {
         Ok(user) => {
             let user_str = serde_json::to_string(&user)
@@ -70,7 +72,6 @@ pub async fn get_user(
             .map_err(|_| UsersErrors::RedisError)?;
             Ok(user)
         },
-
         Err(e) => Err(e)
     } 
 }
