@@ -1,6 +1,6 @@
 use std::sync::Arc;
-
 use askama::Template;
+
 use axum::{
     Form,
     extract::{ State, Path }, 
@@ -13,6 +13,10 @@ use axum::{
         Response
     }
 };
+
+use axum_extra::extract::cookie;
+
+
 use serde_json::to_string;
 
 use crate::{
@@ -39,7 +43,7 @@ struct RegisterTemplate {
     error: Option<String>
 }
 
-pub async fn register_web() -> Html<String>{
+pub async fn register_web() -> Html<String> {
     let t = RegisterTemplate { error: None };
     Html(t.render().unwrap())
 }
@@ -159,6 +163,19 @@ pub async fn get_user(
     }
 
 }
+
+
+#[derive(Template)]
+#[template(path = "login.html.jinja")]
+struct LoginTemplate {
+    error: Option<String>,
+}
+
+pub async fn login_web() -> Html<String> {
+    let template = LoginTemplate { error:None };
+    Html(template.render().unwrap())
+}
+
 
 pub async fn delete_user() {}
 pub async fn update_user() {}

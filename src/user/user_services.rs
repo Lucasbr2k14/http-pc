@@ -75,3 +75,5 @@ pub async fn get_user(
         Err(e) => Err(e)
     } 
 }
+
+pub async fn login() {}

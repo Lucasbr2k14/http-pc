@@ -21,6 +21,10 @@ pub fn router_web() -> Router<Arc<AppState>> {
             post(handler::create_user)
         )
         .route(
+            "/login",
+            get(handler::login_web)
+        )
+        .route(
             "/users",
             get(handler::users)
         )
@@ -28,6 +32,6 @@ pub fn router_web() -> Router<Arc<AppState>> {
             "/users/{user_id}",
             get(handler::get_user)
         );
-  
+        
     router
 }

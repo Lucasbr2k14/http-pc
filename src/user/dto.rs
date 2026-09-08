@@ -19,3 +19,10 @@ pub struct PublicUser {
     pub role_id: i32,
     pub uuid: Uuid
 }
+
+// Para fazer o login vindo do html GET: /login
+#[derive(Debug, Deserialize, Serialize)]
+pub struct FromLogin {
+    pub email: String,
+    pub password: String,
+}

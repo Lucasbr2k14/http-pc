@@ -1,61 +1,43 @@
 {% extends "base.html.jinja" %}
-
 {% block title %}
     User
 {% endblock %}
-
 {% block head %}
     {{ super() }}
 {% endblock %}
-
 {% block content %}
-
     {% match user %}
-
         {% when Some with (user) %}
-
             <div>
                 <h1>{{ user.name }}</h1>
-
                 <p>
                     <strong>Email:</strong>
                     {{ user.email }}
                 </p>
-
                 <p>
                     <strong>Role:</strong>
                     {{ user.role_id }}
                 </p>
-
                 <p>
                     <strong>UUID:</strong>
                     {{ user.uuid }}
                 </p>
-
                 {% match user.description %}
-
                     {% when Some with (description) %}
                         <p>
                             <strong>Descrição:</strong>
                             {{ description }}
                         </p>
-
                     {% when None %}
                         <p>
                             <strong>Descrição:</strong>
-                            Sem descrição
                         </p>
-
                 {% endmatch %}
             </div>
-
         {% when None %}
-
             <div>
                 <h1>Usuário não encontrado</h1>
                 <p>O usuário solicitado não existe.</p>
             </div>
-
     {% endmatch %}
-
 {% endblock %}
